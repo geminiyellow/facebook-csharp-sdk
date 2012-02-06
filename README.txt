@@ -1,0 +1,1 @@
+This project has moved to Github: https://github.com/facebook-csharp-sdk
