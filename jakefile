@@ -1,0 +1,14 @@
+var paprika = require('./Build/node_modules/paprika'),
+	msbuild = paprika.msbuild,
+	path = require('path'),
+	fs = require('fs'),
+	config = {
+		projectName: 'Facebook C# SDK',
+		projectSafeName: 'FacebookCSharpSDK',
+		version: fs.readFileSync('VERSION', 'utf-8'),
+		paths: {
+			root: path.normalize(__dirname)
+		}
+	};
+
+console.log('Building ' + config.projectName + ' v' + config.version);
