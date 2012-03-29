@@ -88,3 +88,5 @@ namespace('clean', function () {
 	task('all', ['clean:net40', 'clean:net35', 'clean:wp71', 'clean:sl5']);
 
 });
+
+task('clean', ['clean:all']);
