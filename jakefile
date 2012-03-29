@@ -15,17 +15,43 @@ console.log(config.projectName + ' v' + config.version);
 
 msbuild.setDefaults({
 	properties: { Configuration: 'Release' },
-	processor: 'x86'
+	processor: 'x86',
+	version: 'net40'
 });
 
 namespace('build', function () {
 	
 	desc('Build .NET 4.0 binaries');
+	task('net40', ['clean:net40'], function () {
+		msbuild({
+			file: 'Source/Facebook-Net40.sln',
+			targets: ['Build']
+		});
+	});
+
+	desc('Build .NET 3.5 binaries');
+	task('net35', ['clean:net35'], function () {
+		msbuild({
+			file: 'Source/Facebook-Net35.sln',
+			targets: ['Build']
+		});
+	});
+
+});
+
+namespace('clean', function () {
+	
 	task('net40', function () {
 		msbuild({
 			file: 'Source/Facebook-Net40.sln',
-			version: 'net40',
-			targets: 'Build'
+			targets: ['Clean']
+		});
+	});
+
+	task('net35', function () {
+		msbuild({
+			file: 'Source/Facebook-Net35.sln',
+			targets: ['Clean']
 		});
 	});
 
