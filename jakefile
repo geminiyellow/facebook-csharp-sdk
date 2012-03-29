@@ -11,4 +11,22 @@ var paprika = require('./Build/node_modules/paprika'),
 		}
 	};
 
-console.log('Building ' + config.projectName + ' v' + config.version);
+console.log(config.projectName + ' v' + config.version);
+
+msbuild.setDefaults({
+	properties: { Configuration: 'Release' },
+	processor: 'x86'
+});
+
+namespace('build', function () {
+	
+	desc('Build .NET 4.0 binaries');
+	task('net40', function () {
+		msbuild({
+			file: 'Source/Facebook-Net40.sln',
+			version: 'net40',
+			targets: 'Build'
+		});
+	});
+
+});
