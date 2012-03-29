@@ -19,6 +19,8 @@ msbuild.setDefaults({
 	version: 'net40'
 });
 
+task('default', ['build']);
+
 namespace('build', function () {
 	
 	desc('Build .NET 4.0 binaries');
