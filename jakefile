@@ -24,7 +24,7 @@ task('default', ['build']);
 namespace('build', function () {
 	
 	desc('Build .NET 4.0 binaries');
-	task('net40', ['clean:net40'], function () {
+	task('net40', ['clean:net40', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net40.sln',
 			targets: ['Build']
@@ -32,7 +32,7 @@ namespace('build', function () {
 	});
 
 	desc('Build .NET 3.5 binaries');
-	task('net35', ['clean:net35'], function () {
+	task('net35', ['clean:net35', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net35.sln',
 			targets: ['Build']
@@ -40,7 +40,7 @@ namespace('build', function () {
 	});
 
 	desc('Build Windows Phone 7.1 binaries');
-	task('wp71', ['clean:wp71'], function () {
+	task('wp71', ['clean:wp71', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Build']
@@ -48,7 +48,7 @@ namespace('build', function () {
 	});
 
 	desc('Build Silverlight 5 binaries');
-	task('sl5', ['clean:sl5'], function () {
+	task('sl5', ['clean:sl5', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Build']
@@ -96,3 +96,14 @@ namespace('clean', function () {
 });
 
 task('clean', ['clean:all']);
+
+namespace('nuget', function(){
+
+	task('download', function () {
+		msbuild({
+			file: 'Source/.nuget/NuGet.targets',
+			targets: ['CheckPrerequisites']
+		});
+	});
+
+});
