@@ -57,6 +57,8 @@ namespace('build', function () {
 
 });
 
+task('build', ['build:all']);
+
 namespace('clean', function () {
 	
 	task('net40', function () {
