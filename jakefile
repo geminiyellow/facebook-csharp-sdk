@@ -53,6 +53,8 @@ namespace('build', function () {
 		});
 	});
 
+	task('all', ['build:net40', 'build:net35', 'build:wp71', 'build:sl5']);
+
 });
 
 namespace('clean', function () {
