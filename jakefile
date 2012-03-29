@@ -37,6 +37,14 @@ namespace('build', function () {
 		});
 	});
 
+	desc('Build Windows Phone 7.1 binaries');
+	task('wp71', ['clean:wp71'], function () {
+		msbuild({
+			file: 'Source/Facebook-WP7.sln',
+			targets: ['Build']
+		})
+	});
+
 });
 
 namespace('clean', function () {
@@ -51,6 +59,13 @@ namespace('clean', function () {
 	task('net35', function () {
 		msbuild({
 			file: 'Source/Facebook-Net35.sln',
+			targets: ['Clean']
+		});
+	});
+
+	task('wp71', function () {
+		msbuild({
+			file: 'Source/Facebook-WP7.sln',
 			targets: ['Clean']
 		});
 	});
