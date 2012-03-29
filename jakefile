@@ -28,32 +28,32 @@ namespace('build', function () {
 		msbuild({
 			file: 'Source/Facebook-Net40.sln',
 			targets: ['Build']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	desc('Build .NET 3.5 binaries');
 	task('net35', ['clean:net35', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net35.sln',
 			targets: ['Build']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	desc('Build Windows Phone 7.1 binaries');
 	task('wp71', ['clean:wp71', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Build']
-		})
-	});
+		}, complete)
+	}, { async: true});
 
 	desc('Build Silverlight 5 binaries');
 	task('sl5', ['clean:sl5', 'nuget:download'], function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Build']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	task('all', ['build:net40', 'build:net35', 'build:wp71', 'build:sl5']);
 
@@ -67,29 +67,29 @@ namespace('clean', function () {
 		msbuild({
 			file: 'Source/Facebook-Net40.sln',
 			targets: ['Clean']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	task('net35', function () {
 		msbuild({
 			file: 'Source/Facebook-Net35.sln',
 			targets: ['Clean']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	task('wp71', function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Clean']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	task('sl5', function () {
 		msbuild({
 			file: 'Source/Facebook-SL5.sln',
 			targets: ['Clean']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 	task('all', ['clean:net40', 'clean:net35', 'clean:wp71', 'clean:sl5']);
 
@@ -103,7 +103,7 @@ namespace('nuget', function(){
 		msbuild({
 			file: 'Source/.nuget/NuGet.targets',
 			targets: ['CheckPrerequisites']
-		});
-	});
+		}, complete);
+	}, { async: true});
 
 });
