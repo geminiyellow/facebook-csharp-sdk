@@ -47,6 +47,14 @@ namespace('build', function () {
 		}, complete);
 	}, { async: true});
 
+	desc('Build WINRT (Metro) binaries');
+	task('winrt', ['clean:winrt'], function () {
+		msbuild({
+			file: 'Source/Facebook-WinRT.sln',
+			targets: ['Build']
+		}, complete);
+	}, { async: true});
+
 	desc('Build Windows Phone 7.1 binaries');
 	task('wp71', ['clean:wp71'], function () {
 		msbuild({
@@ -63,7 +71,7 @@ namespace('build', function () {
 		}, complete);
 	}, { async: true});
 
-	task('all', ['build:net45', 'build:net40', 'build:net35', 'build:wp71', 'build:sl5']);
+	task('all', ['build:net45', 'build:net40', 'build:net35', 'build:winrt', 'build:wp71', 'build:sl5']);
 
 });
 
@@ -92,6 +100,13 @@ namespace('clean', function () {
 		}, complete);
 	}, { async: true});
 
+	task('winrt', function () {
+		msbuild({
+			file: 'Source/Facebook-WinRT.sln',
+			targets: ['Clean']
+		}, complete);
+	}, { async: true});
+
 	task('wp71', function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
@@ -106,7 +121,7 @@ namespace('clean', function () {
 		}, complete);
 	}, { async: true});
 
-	task('all', ['clean:net45', 'clean:net40', 'clean:net35', 'clean:wp71', 'clean:sl5']);
+	task('all', ['clean:net45', 'clean:net40', 'clean:net35',  'clean:winrt', 'clean:wp71', 'clean:sl5']);
 
 });
 
