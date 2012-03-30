@@ -1,5 +1,6 @@
 var paprika = require('./Build/node_modules/paprika'),
 	msbuild = paprika.msbuild,
+	run = paprika.run,
 	path = require('path'),
 	fs = require('fs'),
 	config = {
@@ -20,6 +21,8 @@ msbuild.setDefaults({
 });
 
 task('default', ['build']);
+
+directory('Dist/');
 
 namespace('build', function () {
 
@@ -127,7 +130,12 @@ namespace('clean', function () {
 
 task('clean', ['clean:all']);
 
-namespace('nuget', function(){
+directory('Dist/NuGet/', ['Dist/']);
+directory('Dist/SymbolSource/', ['Dist/']);
+
+namespace('nuget', function() {	
+
+	var nugetExe = path.join(config.paths.root, 'Source/.nuget/NuGet.exe');
 
 	task('download', function () {
 		msbuild({
@@ -135,5 +143,37 @@ namespace('nuget', function(){
 			targets: ['CheckPrerequisites']
 		}, complete);
 	}, { async: true});
+
+	namespace('pack', function () {		
+		
+		namespace('nuget', function () {			
+			task('facebook', ['nuget:download', 'Dist/NuGet/', 'build'], function () {
+				run(nugetExe, ['pack', 'Build/NuGet/Facebook/Facebook.nuspec', '-Verbose', '-OutputDirectory', 'Dist/NuGet/', '-version', config.version ], function (code) {
+					code === 0 ? complete() : fail('nuget:pack:nuget:facebook failed');
+				});
+			}, { async: true });
+
+			task('all', ['nuget:pack:nuget:facebook']);
+		});
+
+		task('nuget', ['nuget:pack:nuget:all']);
+
+		namespace('symbolsource', function () {			
+			task('facebook', ['nuget:download', 'Dist/SymbolSource/', 'build'], function () {
+				run(nugetExe, ['pack', 'Build/SymbolSource/Facebook/Facebook.nuspec', '-Verbose', '-OutputDirectory', 'Dist/SymbolSource/', '-version', config.version ], function (code) {
+					code === 0 ? complete() : fail('nuget:pack:symbolsource:facebook failed');
+				});
+			}, { async: true });
+
+			task('all', ['nuget:pack:symbolsource:facebook']);
+		});
+
+		task('symbolsource', ['nuget:pack:symbolsource:all']);
+
+		task('all', ['nuget:pack:nuget', 'nuget:pack:symbolsource']);
+	});
+
+	desc('Create NuGet and SymbolSource *.nupkg files');
+	task('pack', ['nuget:pack:all']);
 
 });
