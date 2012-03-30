@@ -50,7 +50,7 @@ namespace('build', function () {
 	desc('Build Silverlight 5 binaries');
 	task('sl5', ['clean:sl5'], function () {
 		msbuild({
-			file: 'Source/Facebook-WP7.sln',
+			file: 'Source/Facebook-SL5.sln',
 			targets: ['Build']
 		}, complete);
 	}, { async: true});
