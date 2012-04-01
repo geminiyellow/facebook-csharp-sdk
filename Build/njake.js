@@ -29,11 +29,11 @@
 			var opt = extend({}, defaults, opts),
 				args = [];
 
-			if(!opt.file) fail('file required');
+			if(!opt.file) fail('msbuild failed - file required');
 
 			if(!opt._exe) {
-				if(!opt.processor) fail('processor required');
-				if(!opt.version) fail('version required');
+				if(!opt.processor) fail('msbuild failed - processor required');
+				if(!opt.version) fail('msbuild failed - version required');
 				opt._exe = exports.getDotNetVersionPath(opt.version, opt.processor) + 'MSBuild.exe';
 			}
 
@@ -50,6 +50,36 @@
 
 			exports.exec(opt._exe, args, function (code) {
 				if(code !== 0) fail('msbuild failed')
+				callback ? callback(code) : complete();
+			});
+		};
+
+		task.setDefaults = function (opts) {
+			extend(defaults, opts);
+			return defaults;
+		};
+
+		return task;
+
+	})();
+
+	exports.xunit = (function () {
+		
+		var defaults = {};
+
+		var task = function (opts, callback) {
+			var opt = extend({}, defaults, opts),
+				args = [];
+
+			if(!opt._exe) fail('xunit failed - _exe required');
+			if(!opt.assembly) fail('xunit failed - assembly required');
+
+			args.push(opt.assembly);
+
+			args.push.apply(args, opt._parameters || []);
+
+			exports.exec(opt._exe, args, function (code) {
+				if(code !== 0) fail('xunit failed')
 				callback ? callback(code) : complete();
 			});
 		};
