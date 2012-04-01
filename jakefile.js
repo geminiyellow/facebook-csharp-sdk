@@ -168,7 +168,11 @@ namespace('nuget', function () {
 
 
 		task('symbolsource', ['Dist/SymbolSource'], function () {
-			complete();
+			nuget.pack({
+				nuspec: 'Build/SymbolSource/Facebook/Facebook.nuspec',
+				version: config.version,
+				outputDirectory: 'Dist/SymbolSource'
+			})
 		}, { async:true })
 
 		task('all', ['nuget:pack:nuget', 'nuget:pack:symbolsource'])
