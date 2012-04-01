@@ -25,8 +25,8 @@ nuget.setDefaults({
 	verbose: true
 })
 
-desc('Build all binaries and run tests')
-task('default', ['build', 'test'])
+desc('Build all binaries, run tests and create nuget and symbolsource packages')
+task('default', ['build', 'test', 'nuget:pack'])
 
 directory('Dist/')
 
@@ -158,7 +158,7 @@ namespace('nuget', function () {
 	
 	namespace('pack', function () {
 		
-		task('nuget', ['Dist/NuGet'], function () {
+		task('nuget', ['Dist/NuGet', 'build'], function () {
 			nuget.pack({
 				nuspec: 'Build/NuGet/Facebook/Facebook.nuspec',
 				version: config.version,
@@ -167,7 +167,7 @@ namespace('nuget', function () {
 		}, { async: true })
 
 
-		task('symbolsource', ['Dist/SymbolSource'], function () {
+		task('symbolsource', ['Dist/SymbolSource', 'build'], function () {
 			nuget.pack({
 				nuspec: 'Build/SymbolSource/Facebook/Facebook.nuspec',
 				version: config.version,
@@ -179,7 +179,7 @@ namespace('nuget', function () {
 
 	})
 
-	desc('Create NuGet pacakges')
+	desc('Create NuGet and SymbolSource pacakges')
 	task('pack', ['nuget:pack:all'])
 
 })
