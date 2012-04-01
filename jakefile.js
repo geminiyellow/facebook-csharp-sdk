@@ -3,7 +3,7 @@ var njake 		= require('./Build/njake'),
 	msbuild 	= njake.msbuild
 	xunit		= njake.xunit;
 
-task('default', ['build'])
+task('default', ['build', 'test'])
 
 msbuild.setDefaults({
 	properties: { Configuration: 'Release' },
@@ -123,7 +123,7 @@ task('clean', ['clean:all'])
 
 namespace('tests', function () {
 	
-	task('net40', function () {
+	task('net40', ['build:net40'], function () {
 		xunit({
 			assembly: 'Bin/Tests/Release/Facebook.Tests.dll'
 		})
