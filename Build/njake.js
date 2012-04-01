@@ -93,6 +93,60 @@
 
 	})();
 
+	exports.nuget = (function () {
+		
+		var defaults = {
+			_exe: 'NuGet.exe'
+		};
+
+		var task = {};
+
+		task.pack = function (opts, callback) {
+			var opt = extend({}, defaults, opts),
+				args = [];
+
+			args.push('pack');
+
+			if(!opt._exe) fail('nuget.pack failed - _exe required');
+			if(!opt.nuspec) fail('nuget.pack failed - nuspec required');
+			args.push(opt.nuspec);
+
+			if(opt.outputDirectory) {
+				args.push('-OutputDirectory')
+				args.push(opt.outputDirectory);
+			}
+
+			if(opt.verbose) args.push('-Verbose');
+
+			if(opt.version) {
+				args.push('-Version');
+				args.push(opt.version);
+			}
+
+			if(opt.properties) {
+				for(var key in opt.properties){
+					args.push('-Properties');
+					args.push(key + '=' + opt.properties[key])
+				}
+			}
+
+			args.push.apply(args, opt._parameters || []);
+
+			exports.exec(opt._exe, args, function (code) {
+				if(code !== 0) fail('xunit failed')
+				callback ? callback(code) : complete();
+			});
+		};
+
+		task.setDefaults = function (opts) {
+			extend(defaults, opts);
+			return defaults;	
+		};
+
+		return task;
+
+	})();
+
 	exports.getWinDir = function () {
         var winDir = process.env.WINDIR;
         return path.normalize((winDir.substr(-1) === '/' || winDir.substr(-1) === '\\') ? winDir : (winDir + '/')); // append / if absent

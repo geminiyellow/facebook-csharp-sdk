@@ -3,15 +3,12 @@ var fs 			= require('fs'),
 	exec 		= njake.exec,
 	msbuild 	= njake.msbuild
 	xunit		= njake.xunit,
+	nuget 		= njake.nuget,
 	config = {
 		version 	: fs.readFileSync('VERSION')
 	};
 
 console.log('Facebook C# SDK v' + config.version)
-
-
-desc('Build all binaries and run tests')
-task('default', ['build', 'test'])
 
 msbuild.setDefaults({
 	properties: { Configuration: 'Release' },
@@ -22,6 +19,16 @@ msbuild.setDefaults({
 xunit.setDefaults({
 	_exe: 'Tools/xunit-1.8/xunit.console.clr4.x86'
 })
+
+nuget.setDefaults({
+	_exe: 'Source/.nuget/NuGet.exe',
+	verbose: true
+})
+
+desc('Build all binaries and run tests')
+task('default', ['build', 'test'])
+
+directory('Dist/')
 
 namespace('build', function () {
 
@@ -135,7 +142,7 @@ namespace('tests', function () {
 		xunit({
 			assembly: 'Bin/Tests/Release/Facebook.Tests.dll'
 		})
-	})
+	}, { async: true })
 
 	task('all', ['tests:net40'])
 
@@ -143,3 +150,32 @@ namespace('tests', function () {
 
 desc('Run tests')
 task('test', ['tests:all'])
+
+directory('Dist/NuGet', ['Dist/'])
+directory('Dist/SymbolSource', ['Dist/'])
+
+namespace('nuget', function () {
+	
+	namespace('pack', function () {
+		
+		task('nuget', ['Dist/NuGet'], function () {
+			nuget.pack({
+				nuspec: 'Build/NuGet/Facebook/Facebook.nuspec',
+				version: config.version,
+				outputDirectory: 'Dist/NuGet'
+			})
+		}, { async: true })
+
+
+		task('symbolsource', ['Dist/SymbolSource'], function () {
+			complete();
+		}, { async:true })
+
+		task('all', ['nuget:pack:nuget', 'nuget:pack:symbolsource'])
+
+	})
+
+	desc('Create NuGet pacakges')
+	task('pack', ['nuget:pack:all'])
+
+})
