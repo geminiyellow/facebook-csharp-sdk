@@ -1,9 +1,9 @@
-var fs 			= require('fs'),
-	njake 		= require('./Build/njake'),
-	exec 		= njake.exec,
-	msbuild 	= njake.msbuild
-	xunit		= njake.xunit,
-	nuget 		= njake.nuget,
+var fs 			 = require('fs'),
+	njake 		 =  require('./Build/njake'),
+	msbuild 	 = njake.msbuild
+	xunit		 = njake.xunit,
+	nuget 		 = njake.nuget,
+	assemblyinfo = njake.assemblyinfo,
 	config = {
 		version 	: fs.readFileSync('VERSION')
 	};
@@ -25,6 +25,10 @@ nuget.setDefaults({
 	verbose: true
 })
 
+assemblyinfo.setDefaults({
+	language: 'c#'
+})
+
 desc('Build all binaries, run tests and create nuget and symbolsource packages')
 task('default', ['build', 'test', 'nuget:pack'])
 
@@ -33,7 +37,7 @@ directory('Dist/')
 namespace('build', function () {
 
 	desc('Build .NET 4.5 binaries')
-	task('net45', function () {
+	task('net45', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net45.sln',
 			targets: ['Build']
@@ -41,7 +45,7 @@ namespace('build', function () {
 	}, { async: true })
 	
 	desc('Build .NET 4.0 binaries')
-	task('net40', function () {
+	task('net40', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net40.sln',
 			targets: ['Build']
@@ -49,7 +53,7 @@ namespace('build', function () {
 	}, { async: true })
 
 	desc('Build .NET 3.5 binaries')
-	task('net35', function () {
+	task('net35', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-Net35.sln',
 			targets: ['Build']
@@ -57,7 +61,7 @@ namespace('build', function () {
 	}, { async: true })
 
 	desc('Build WinRT(Metro) binaries')
-	task('winrt', function () {
+	task('winrt', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-WinRT.sln',
 			targets: ['Build']
@@ -65,7 +69,7 @@ namespace('build', function () {
 	}, { async: true })
 
 	desc('Build Windows Phone 7.1 binaries')
-	task('wp71', function () {
+	task('wp71', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-WP7.sln',
 			targets: ['Build']
@@ -73,7 +77,7 @@ namespace('build', function () {
 	}, { async: true })
 
 	desc('Build Silverlight 5 binaries')
-	task('sl5', function () {
+	task('sl5', ['assemblyinfo:facebook'], function () {
 		msbuild({
 			file: 'Source/Facebook-SL5.sln',
 			targets: ['Build']
@@ -173,7 +177,7 @@ namespace('nuget', function () {
 				version: config.version,
 				outputDirectory: 'Dist/SymbolSource'
 			})
-		}, { async:true })
+		}, { async: true })
 
 		task('all', ['nuget:pack:nuget', 'nuget:pack:symbolsource'])
 
@@ -181,5 +185,28 @@ namespace('nuget', function () {
 
 	desc('Create NuGet and SymbolSource pacakges')
 	task('pack', ['nuget:pack:all'])
+
+})
+
+namespace('assemblyinfo', function () {
+	
+	task('facebook', function () {
+		assemblyinfo({
+			file: 'Source/Facebook/Properties/AssemblyInfo.cs',
+			assembly: {
+				notice: function () {
+					return '// Do not modify this file manually, use jakefile instead.\r\n';
+				},
+				AssemblyTitle: 'Facebook',
+				AssemblyDescription: 'Facebook C# SDK',
+				AssemblyCompany: 'The Outercurve Foundation',
+				AssemblyProduct: 'Facebook C# SDK',
+				AssemblyCopyright: 'Copyright (c) 2011, The Outercurve Foundation.',
+				ComVisible: false,
+				AssemblyVersion: config.version,
+				AssemblyFileVersion: config.version
+			}
+		})
+	}, { async: true })
 
 })

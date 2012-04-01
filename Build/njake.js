@@ -1,7 +1,8 @@
 (function () {
 	
 	var spawn = require('child_process').spawn,
-		path  = require('path');
+		path  = require('path'),
+		fs 	  = require('fs');
 
 	var extend = function (obj) {
 		var args = Array.prototype.slice.call(arguments);
@@ -133,7 +134,7 @@
 			args.push.apply(args, opt._parameters || []);
 
 			exports.exec(opt._exe, args, function (code) {
-				if(code !== 0) fail('xunit failed')
+				if(code !== 0) fail('nuget.pack failed')
 				callback ? callback(code) : complete();
 			});
 		};
@@ -145,6 +146,60 @@
 
 		return task;
 
+	})();
+
+	exports.assemblyinfo = (function () {
+		var defaults = {
+			language: 'c#',
+			namespaces: ['System.Reflection', 'System.Runtime.InteropServices']
+		};
+
+		var supportedLangagues = ['c#'];
+
+		var task = function (opts, callback) {
+			var opt = extend({}, defaults, opts),
+				contents = '',
+				assemblyValue;
+
+			if(!opt.file) fail('assemblyinfo failed - file required');
+			if(!opt.language) fail('assemblyinfo failed - language required');
+
+			if(opt.language === 'c#') {
+				if(opt.namespaces) {
+					opt.namespaces.forEach(function (ns) {
+						contents += 'using ' + ns + ';\r\n';	
+					});
+				}
+				if(opt.assembly) {
+					for(var key in opt.assembly) {
+						assemblyValue = opt.assembly[key];
+						if(typeof assemblyValue === 'function'){
+							contents += assemblyValue();
+							continue;
+						}
+						contents += '[assembly: ' + key + '(';						
+						if(typeof assemblyValue === 'boolean')
+							contents += assemblyValue ? 'true' : 'false';
+						else 
+							contents += '\"' + assemblyValue + '\"';
+						contents += ')]\r\n';
+					}
+				}
+				fs.writeFileSync(opt.file, contents);
+			} else {
+				fail('assemblyinfo failed - unsupported language. choose ' + supportedLangagues);
+			}
+
+			callback ? callback(0) : complete();
+		};
+
+		task.setDefaults = function (opts) {
+			extend(defaults, opts);
+			return defaults;
+		}
+
+		return task;
+		
 	})();
 
 	exports.getWinDir = function () {
