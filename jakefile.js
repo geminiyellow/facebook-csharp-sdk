@@ -1,7 +1,14 @@
-var njake 		= require('./Build/njake'),
+var fs 			= require('fs'),
+	njake 		= require('./Build/njake'),
 	exec 		= njake.exec,
 	msbuild 	= njake.msbuild
-	xunit		= njake.xunit;
+	xunit		= njake.xunit,
+	config = {
+		version 	: fs.readFileSync('VERSION')
+	};
+
+console.log('Facebook C# SDK v' + config.version)
+
 
 desc('Build all binaries and run tests')
 task('default', ['build', 'test'])
