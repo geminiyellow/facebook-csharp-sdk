@@ -86,9 +86,9 @@ namespace('build', function () {
 
 	task('all', ['build:net45', 'build:net40', 'build:net35', 'build:wp71', 'build:sl5', 'build:winrt'])
 
-    task('mono', function () {
+    task('mono', function (xbuildPath) {
         msbuild({
-            _exe: 'xbuild',
+            _exe: xbuildPath || 'xbuild',
             file: 'Source/Facebook-Net40.sln',
             targets: ['Build'],
             properties: { TargetFrameworkProfile: '' }
