@@ -3,6 +3,7 @@ var njake 		= require('./Build/njake'),
 	msbuild 	= njake.msbuild
 	xunit		= njake.xunit;
 
+desc('Build all binaries and run tests')
 task('default', ['build', 'test'])
 
 msbuild.setDefaults({
