@@ -159,6 +159,13 @@ directory('Dist/NuGet', ['Dist/'])
 directory('Dist/SymbolSource', ['Dist/'])
 
 namespace('nuget', function () {
+
+	task('download', function() {
+		msbuild({
+			file: 'Source/.nuget/NuGet.targets',
+			targets: ['CheckPrerequisites']
+		})
+	})
 	
 	namespace('pack', function () {
 		
