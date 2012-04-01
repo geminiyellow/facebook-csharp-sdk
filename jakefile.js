@@ -11,6 +11,14 @@ msbuild.setDefaults({
 })
 
 namespace('build', function () {
+
+	desc('Build .NET 4.5 binaries')
+	task('net45', function () {
+		msbuild({
+			file: 'Source/Facebook-Net45.sln',
+			targets: ['Build']
+		})
+	}, { async: true })
 	
 	desc('Build .NET 4.0 binaries')
 	task('net40', function () {
@@ -44,13 +52,20 @@ namespace('build', function () {
 		})
 	}, { async: true })
 
-	task('all', ['build:net40', 'build:net35', 'build:wp71', 'build:sl5'])
+	task('all', ['build:net45', 'build:net40', 'build:net35', 'build:wp71', 'build:sl5'])
 
 })
 
 task('build', ['build:all'])
 
 namespace('clean', function () {
+
+	task('net45', function () {
+		msbuild({
+			file: 'Source/Facebook-Net40.sln',
+			targets: ['Clean']
+		})
+	}, { async: true })
 	
 	task('net40', function () {
 		msbuild({
@@ -80,7 +95,7 @@ namespace('clean', function () {
 		})
 	}, { async: true })
 
-	task('all', ['clean:net40', 'clean:net35', 'clean:wp71', 'clean:sl5'])
+	task('all', ['clean:net45', 'clean:net40', 'clean:net35', 'clean:wp71', 'clean:sl5'])
 
 })
 
